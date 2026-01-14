@@ -18,16 +18,23 @@ public class Doctor {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
     private Specialty specialty;
 
+    @Column(nullable = false)
     private String phone;
 
+    @Column(unique = true, nullable = false)
     private String licenseNumber;
+
+    private Boolean active = true;
 
     @Embedded
     private Address address;

@@ -1,0 +1,5 @@
+ALTER TABLE doctors
+    ADD active BOOLEAN;
+
+ALTER TABLE doctors
+    ALTER COLUMN phone SET NOT NULL;
