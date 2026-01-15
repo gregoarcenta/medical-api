@@ -1,27 +1,33 @@
 package com.medical.api.controllers;
 
 import com.medical.api.dto.DoctorRequest;
+import com.medical.api.dto.DoctorResponse;
 import com.medical.api.models.Doctor;
-import com.medical.api.repository.DoctorRepository;
+import com.medical.api.services.DoctorService;
 import jakarta.validation.Valid;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/doctors")
-class DoctorController {
-    private final DoctorRepository doctorRepository;
+public class DoctorController {
 
-    DoctorController(DoctorRepository doctorRepository) {
-        this.doctorRepository = doctorRepository;
+    private final DoctorService doctorService;
+
+    public DoctorController(DoctorService doctorService) {
+        this.doctorService = doctorService;
     }
 
-    @Transactional
     @PostMapping
     public Doctor createDoctor(@RequestBody @Valid DoctorRequest doctor) {
-        return doctorRepository.save(new Doctor(doctor));
+        return doctorService.createDoctor(doctor);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<DoctorResponse>> getAllDoctors(@PageableDefault(sort = {"name"}) Pageable pageable) {
+        return ResponseEntity.ok(doctorService.getAllDoctors(pageable));
     }
 }
