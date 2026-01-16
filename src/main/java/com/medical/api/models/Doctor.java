@@ -1,8 +1,10 @@
 package com.medical.api.models;
 
-import com.medical.api.dto.DoctorRequest;
+import com.medical.api.dto.DoctorCreateRequest;
+import com.medical.api.dto.DoctorUpdateRequest;
 import com.medical.api.utils.Specialty;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,12 +41,24 @@ public class Doctor {
     @Embedded
     private Address address;
 
-    public Doctor(DoctorRequest doctor) {
-        this.name = doctor.name();
-        this.email = doctor.email();
-        this.phone = doctor.phone();
+    public Doctor(DoctorCreateRequest doctor) {
+        this.name = doctor.name().trim();
+        this.email = doctor.email().trim();
+        this.phone = doctor.phone().trim();
         this.specialty = doctor.specialty();
         this.licenseNumber = doctor.licenseNumber();
         this.address = new Address(doctor.address());
+    }
+
+    public void update(@Valid DoctorUpdateRequest doctorRequest) {
+        if (doctorRequest.name() != null && !doctorRequest.name().isBlank()) {
+            this.name = doctorRequest.name().trim();
+        }
+        if (doctorRequest.phone() != null && !doctorRequest.phone().isBlank()) {
+            this.phone = doctorRequest.phone().trim();
+        }
+        if (doctorRequest.address() != null) {
+            this.address.update(doctorRequest.address());
+        }
     }
 }

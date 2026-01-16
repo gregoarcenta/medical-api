@@ -7,6 +7,6 @@ import java.io.Serializable;
 /**
  * DTO for {@link com.medical.api.models.Doctor}
  */
-public record DoctorResponse(String name, String email, Specialty specialty, String licenseNumber)
+public record DoctorResponse(Long id, String name, String email, Specialty specialty, String licenseNumber)
         implements Serializable {
 }

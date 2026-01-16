@@ -1,7 +1,8 @@
 package com.medical.api.services;
 
-import com.medical.api.dto.DoctorRequest;
+import com.medical.api.dto.DoctorCreateRequest;
 import com.medical.api.dto.DoctorResponse;
+import com.medical.api.dto.DoctorUpdateRequest;
 import com.medical.api.models.Doctor;
 import com.medical.api.repository.DoctorRepository;
 import org.springframework.data.domain.Page;
@@ -16,8 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
         this.doctorRepository = doctorRepository;
     }
 
-    public Doctor createDoctor(DoctorRequest doctor) {
-        return doctorRepository.save(new Doctor(doctor));
+    public DoctorResponse createDoctor(DoctorCreateRequest doctor) {
+        Doctor doctorCreated = doctorRepository.save(new Doctor(doctor));
+        return toResponse(doctorCreated);
     }
 
     @Transactional(readOnly = true)
@@ -25,11 +27,22 @@ import org.springframework.transaction.annotation.Transactional;
         return doctorRepository.findAll(pageable).map(this::toResponse);
     }
 
+    public DoctorResponse updateDoctor(Long id, DoctorUpdateRequest doctor) {
+//        if (!doctorRepository.existsById(id)) {
+//            throw new DoctorNotFoundException("Doctor con ID " + id + " no encontrado");
+//        }
+        Doctor doctorRef = doctorRepository.getReferenceById(id);
+        doctorRef.update(doctor);
+        return toResponse(doctorRepository.save(doctorRef));
+    }
+
     private DoctorResponse toResponse(Doctor doctor) {
-        return new DoctorResponse(doctor.getName(),
-                                  doctor.getEmail(),
-                                  doctor.getSpecialty(),
-                                  doctor.getLicenseNumber()
+        return new DoctorResponse(
+                doctor.getId(),
+                doctor.getName(),
+                doctor.getEmail(),
+                doctor.getSpecialty(),
+                doctor.getLicenseNumber()
         );
     }
 }

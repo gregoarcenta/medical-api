@@ -2,13 +2,11 @@ package com.medical.api.dto;
 
 import com.medical.api.utils.Specialty;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 
-public record DoctorRequest(
-        @NotBlank(message = "El nombre es obligatorio") 
+public record DoctorCreateRequest(
+        @NotBlank(message = "El nombre es obligatorio")
+        @Size(min = 2, max = 100, message = "El nombre debe tener entre 2 y 100 caracteres")
         String name,
         
         @NotBlank(message = "El email es obligatorio") 
