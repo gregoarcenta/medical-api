@@ -61,4 +61,8 @@ public class Doctor {
             this.address.update(doctorRequest.address());
         }
     }
+
+    public void delete() {
+        this.active = false;
+    }
 }

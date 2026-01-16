@@ -22,8 +22,8 @@ public class DoctorController {
     }
 
     @PostMapping
-    public DoctorResponse createDoctor(@RequestBody @Valid DoctorCreateRequest doctor) {
-        return doctorService.createDoctor(doctor);
+    public DoctorResponse createDoctor(@RequestBody @Valid DoctorCreateRequest doctorRequest) {
+        return doctorService.createDoctor(doctorRequest);
     }
 
     @GetMapping
@@ -34,5 +34,10 @@ public class DoctorController {
     @PatchMapping("/{id}")
     public DoctorResponse updateDoctor(@PathVariable Long id, @RequestBody DoctorUpdateRequest doctorRequest) {
         return doctorService.updateDoctor(id, doctorRequest);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteDoctor(@PathVariable Long id) {
+        return doctorService.deleteDoctor(id);
     }
 }

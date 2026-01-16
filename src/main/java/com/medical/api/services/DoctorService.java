@@ -10,7 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service @Transactional public class DoctorService {
+@Service
+@Transactional
+public class DoctorService {
     private final DoctorRepository doctorRepository;
 
     public DoctorService(DoctorRepository doctorRepository) {
@@ -24,25 +26,36 @@ import org.springframework.transaction.annotation.Transactional;
 
     @Transactional(readOnly = true)
     public Page<DoctorResponse> getAllDoctors(Pageable pageable) {
-        return doctorRepository.findAll(pageable).map(this::toResponse);
+        return doctorRepository.getByActiveTrue(pageable).map(this::toResponse);
     }
 
-    public DoctorResponse updateDoctor(Long id, DoctorUpdateRequest doctor) {
-//        if (!doctorRepository.existsById(id)) {
-//            throw new DoctorNotFoundException("Doctor con ID " + id + " no encontrado");
-//        }
-        Doctor doctorRef = doctorRepository.getReferenceById(id);
-        doctorRef.update(doctor);
-        return toResponse(doctorRepository.save(doctorRef));
+    public DoctorResponse updateDoctor(Long id, DoctorUpdateRequest doctorRequest) {
+        Doctor doctor = doctorRepository.findById(id).orElse(null);
+
+        if (doctor == null) return null;
+
+        doctor.update(doctorRequest);
+
+        return toResponse(doctor);
+    }
+
+    public String deleteDoctor(Long id) {
+        Doctor doctor = doctorRepository.findById(id).orElse(null);
+
+        if (doctor == null) return null;
+
+        doctor.delete();
+
+        return "El medico ha sido eliminado";
     }
 
     private DoctorResponse toResponse(Doctor doctor) {
-        return new DoctorResponse(
-                doctor.getId(),
-                doctor.getName(),
-                doctor.getEmail(),
-                doctor.getSpecialty(),
-                doctor.getLicenseNumber()
+        return new DoctorResponse(doctor.getId(),
+                                  doctor.getName(),
+                                  doctor.getEmail(),
+                                  doctor.getSpecialty(),
+                                  doctor.getLicenseNumber()
         );
     }
+
 }
