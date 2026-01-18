@@ -27,7 +27,6 @@ public class Address {
         this.postalCode = address.postalCode();
         this.number = address.number();
         this.complement = address.complement();
-
     }
 
     public void update(AddressRequest addressRequest) {
