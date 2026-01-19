@@ -1,6 +1,6 @@
 package com.medical.api.models;
 
-import com.medical.api.dto.DoctorUpdateRequest;
+import com.medical.api.dto.UpdateRequest;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -34,7 +34,7 @@ import lombok.Setter;
         this.address = address;
     }
 
-    public void update(@Valid DoctorUpdateRequest doctorRequest) {
+    public void update(@Valid UpdateRequest doctorRequest) {
         if (doctorRequest.name() != null && !doctorRequest.name().isBlank()) {
             this.setName(doctorRequest.name().trim());
         }

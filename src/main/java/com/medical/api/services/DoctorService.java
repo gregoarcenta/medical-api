@@ -2,7 +2,7 @@ package com.medical.api.services;
 
 import com.medical.api.dto.DoctorCreateRequest;
 import com.medical.api.dto.DoctorResponse;
-import com.medical.api.dto.DoctorUpdateRequest;
+import com.medical.api.dto.UpdateRequest;
 import com.medical.api.models.Doctor;
 import com.medical.api.repository.DoctorRepository;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ public class DoctorService {
         return doctorRepository.getByActiveTrue(pageable).map(this::toResponse);
     }
 
-    public DoctorResponse updateDoctor(Long id, DoctorUpdateRequest doctorRequest) {
+    public DoctorResponse updateDoctor(Long id, UpdateRequest doctorRequest) {
         Doctor doctor = doctorRepository.findById(id).orElse(null);
 
         if (doctor == null) return null;

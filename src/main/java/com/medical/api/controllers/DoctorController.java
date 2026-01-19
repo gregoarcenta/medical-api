@@ -2,7 +2,7 @@ package com.medical.api.controllers;
 
 import com.medical.api.dto.DoctorCreateRequest;
 import com.medical.api.dto.DoctorResponse;
-import com.medical.api.dto.DoctorUpdateRequest;
+import com.medical.api.dto.UpdateRequest;
 import com.medical.api.services.DoctorService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -32,7 +32,7 @@ public class DoctorController {
     }
 
     @PatchMapping("/{id}")
-    public DoctorResponse updateDoctor(@PathVariable Long id, @RequestBody DoctorUpdateRequest doctorRequest) {
+    public DoctorResponse updateDoctor(@PathVariable Long id, @RequestBody UpdateRequest doctorRequest) {
         return doctorService.updateDoctor(id, doctorRequest);
     }
 
