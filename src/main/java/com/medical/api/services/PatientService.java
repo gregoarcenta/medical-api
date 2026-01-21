@@ -4,6 +4,7 @@ import com.medical.api.dto.PatientCreateRequest;
 import com.medical.api.dto.PatientResponse;
 import com.medical.api.dto.UpdateRequest;
 import com.medical.api.models.Patient;
+import com.medical.api.models.Person;
 import com.medical.api.repository.PatientRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,13 +22,18 @@ public class PatientService {
     }
 
     public PatientResponse createPatient(PatientCreateRequest patientRequest) {
-        var patientSaved = patientRepository.save(new Patient(patientRequest));
-        return toPatientResponse(patientSaved);
+        var patientCreated = patientRepository.save(new Patient(patientRequest));
+        return toPatientResponse(patientCreated);
     }
 
     @Transactional(readOnly = true)
-    public Page<PatientResponse> getAllPatients(Pageable pageable){
+    public Page<PatientResponse> getAllPatients(Pageable pageable) {
         return patientRepository.findByActiveTrue(pageable).map(this::toPatientResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public PatientResponse getPatientById(Long id) {
+        return toPatientResponse(patientRepository.findByIdAndActiveTrue(id).orElseThrow());
     }
 
     public PatientResponse updatePatient(Long id, UpdateRequest patientRequest) {
@@ -35,22 +41,13 @@ public class PatientService {
 
         if (patient == null) return null;
 
-
         patient.update(patientRequest);
-
-        patientRepository.save(patient);
 
         return toPatientResponse(patient);
     }
 
-    public String deletePatient(Long id) {
-        Patient patient = patientRepository.findById(id).orElse(null);
-
-        if (patient == null) return null;
-
-        patient.delete();
-
-        return "El Paciente ha sido eliminado";
+    public void deletePatient(Long id) {
+        patientRepository.findById(id).ifPresent(Person::delete);
     }
 
     private PatientResponse toPatientResponse(Patient patient) {

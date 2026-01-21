@@ -4,6 +4,7 @@ import com.medical.api.dto.DoctorCreateRequest;
 import com.medical.api.dto.DoctorResponse;
 import com.medical.api.dto.UpdateRequest;
 import com.medical.api.models.Doctor;
+import com.medical.api.models.Person;
 import com.medical.api.repository.DoctorRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,12 @@ public class DoctorService {
 
     @Transactional(readOnly = true)
     public Page<DoctorResponse> getAllDoctors(Pageable pageable) {
-        return doctorRepository.getByActiveTrue(pageable).map(this::toResponse);
+        return doctorRepository.findByActiveTrue(pageable).map(this::toResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public DoctorResponse getDoctorById(Long id) {
+        return toResponse(doctorRepository.findByIdAndActiveTrue(id).orElseThrow());
     }
 
     public DoctorResponse updateDoctor(Long id, UpdateRequest doctorRequest) {
@@ -39,22 +45,18 @@ public class DoctorService {
         return toResponse(doctor);
     }
 
-    public String deleteDoctor(Long id) {
-        Doctor doctor = doctorRepository.findById(id).orElse(null);
-
-        if (doctor == null) return null;
-
-        doctor.delete();
-
-        return "El medico ha sido eliminado";
+    public void deleteDoctor(Long id) {
+        doctorRepository.findById(id).ifPresent(Person::delete);
     }
 
     private DoctorResponse toResponse(Doctor doctor) {
         return new DoctorResponse(doctor.getId(),
                                   doctor.getName(),
                                   doctor.getEmail(),
+                                  doctor.getPhone(),
                                   doctor.getSpecialty(),
-                                  doctor.getLicenseNumber()
+                                  doctor.getLicenseNumber(),
+                                  doctor.getAddress()
         );
     }
 

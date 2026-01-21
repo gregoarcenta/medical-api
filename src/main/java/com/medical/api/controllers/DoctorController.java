@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/doctors")
@@ -22,8 +23,10 @@ public class DoctorController {
     }
 
     @PostMapping
-    public DoctorResponse createDoctor(@RequestBody @Valid DoctorCreateRequest doctorRequest) {
-        return doctorService.createDoctor(doctorRequest);
+    public ResponseEntity<DoctorResponse> createDoctor(@RequestBody @Valid DoctorCreateRequest doctorRequest, UriComponentsBuilder uriComponentsBuilder) {
+        var doctor = doctorService.createDoctor(doctorRequest);
+        var uri = uriComponentsBuilder.path("/doctors/{id}").build(doctor.id());
+        return ResponseEntity.created(uri).body(doctor);
     }
 
     @GetMapping
@@ -31,13 +34,19 @@ public class DoctorController {
         return ResponseEntity.ok(doctorService.getAllDoctors(pageable));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<DoctorResponse> getDoctor(@PathVariable Long id) {
+        return ResponseEntity.ok(doctorService.getDoctorById(id));
+    }
+
     @PatchMapping("/{id}")
-    public DoctorResponse updateDoctor(@PathVariable Long id, @RequestBody UpdateRequest doctorRequest) {
-        return doctorService.updateDoctor(id, doctorRequest);
+    public ResponseEntity<DoctorResponse> updateDoctor(@PathVariable Long id, @RequestBody UpdateRequest doctorRequest) {
+        return ResponseEntity.ok(doctorService.updateDoctor(id, doctorRequest));
     }
 
     @DeleteMapping("/{id}")
-    public String deleteDoctor(@PathVariable Long id) {
-        return doctorService.deleteDoctor(id);
+    public ResponseEntity<Void> deleteDoctor(@PathVariable Long id) {
+        doctorService.deleteDoctor(id);
+        return ResponseEntity.noContent().build();
     }
 }
