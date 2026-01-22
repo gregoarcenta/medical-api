@@ -4,8 +4,8 @@ import com.medical.api.dto.DoctorCreateRequest;
 import com.medical.api.dto.DoctorResponse;
 import com.medical.api.dto.UpdateRequest;
 import com.medical.api.models.Doctor;
-import com.medical.api.models.Person;
 import com.medical.api.repository.DoctorRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -32,21 +32,26 @@ public class DoctorService {
 
     @Transactional(readOnly = true)
     public DoctorResponse getDoctorById(Long id) {
-        return toResponse(doctorRepository.findByIdAndActiveTrue(id).orElseThrow());
+        return doctorRepository.findByIdAndActiveTrue(id)
+                .map(this::toResponse)
+                .orElseThrow(() -> new EntityNotFoundException("Doctor not found"));
     }
 
     public DoctorResponse updateDoctor(Long id, UpdateRequest doctorRequest) {
-        Doctor doctor = doctorRepository.findById(id).orElse(null);
-
-        if (doctor == null) return null;
-
+        if (!doctorRepository.existsByIdAndActiveTrue(id)) {
+            throw new EntityNotFoundException("Doctor with ID " + id + " not found or is inactive");
+        }
+        Doctor doctor = doctorRepository.getReferenceById(id);
         doctor.update(doctorRequest);
-
         return toResponse(doctor);
     }
 
     public void deleteDoctor(Long id) {
-        doctorRepository.findById(id).ifPresent(Person::delete);
+        if (!doctorRepository.existsById(id)) {
+            throw new EntityNotFoundException("Delete failed: ID " + id + " does not exist");
+        }
+        Doctor doctor = doctorRepository.getReferenceById(id);
+        doctor.delete();
     }
 
     private DoctorResponse toResponse(Doctor doctor) {

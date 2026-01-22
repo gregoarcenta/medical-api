@@ -10,5 +10,7 @@ import java.util.Optional;
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     Optional<Doctor> findByIdAndActiveTrue(Long id);
 
+    boolean existsByIdAndActiveTrue(Long id);
+
     Page<Doctor> findByActiveTrue(Pageable pageable);
 }
