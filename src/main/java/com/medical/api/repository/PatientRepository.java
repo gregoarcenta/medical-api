@@ -11,4 +11,6 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
     Optional<Patient> findByIdAndActiveTrue(Long id);
 
     Page<Patient> findByActiveTrue(Pageable pageable);
+
+    boolean existsByIdAndActiveTrue(Long id);
 }

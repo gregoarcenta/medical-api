@@ -29,14 +29,14 @@ class PatientController {
         return ResponseEntity.created(uri).body(patient);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PatientResponse> getPatient(@PathVariable Long id) {
-        return ResponseEntity.ok(patientService.getPatientById(id));
-    }
-
     @GetMapping
     public ResponseEntity<Page<PatientResponse>> getAllPatients(@PageableDefault(sort = {"name"}) Pageable pageable) {
         return ResponseEntity.ok(patientService.getAllPatients(pageable));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PatientResponse> getPatient(@PathVariable Long id) {
+        return ResponseEntity.ok(patientService.getPatientById(id));
     }
 
     @PatchMapping("/{id}")
