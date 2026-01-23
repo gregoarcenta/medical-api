@@ -1,4 +1,4 @@
-package com.medical.api.infra;
+package com.medical.api.infra.errors;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
