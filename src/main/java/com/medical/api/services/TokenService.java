@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.medical.api.models.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,12 @@ public class TokenService {
         }
     }
 
+    /**
+     * Verifica el token y retorna el subject (username).
+     *
+     * @throws com.medical.api.infra.security.exceptions.TokenExpiredException si el token expiró
+     * @throws com.medical.api.infra.security.exceptions.TokenInvalidException si el token es inválido
+     */
     public String getSubject(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
@@ -37,8 +44,10 @@ public class TokenService {
                     .build()
                     .verify(token)
                     .getSubject();
-        } catch (JWTVerificationException exception) {
-            throw new RuntimeException("Token JWT inválido o expirado");
+        } catch (TokenExpiredException e) {
+            throw new com.medical.api.infra.security.exceptions.TokenExpiredException();
+        } catch (JWTVerificationException e) {
+            throw new com.medical.api.infra.security.exceptions.TokenInvalidException();
         }
     }
 
