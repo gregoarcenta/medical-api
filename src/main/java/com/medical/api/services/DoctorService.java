@@ -4,7 +4,7 @@ import com.medical.api.dto.DoctorCreateRequest;
 import com.medical.api.dto.DoctorResponse;
 import com.medical.api.dto.UpdateRequest;
 import com.medical.api.models.Doctor;
-import com.medical.api.repository.DoctorRepository;
+import com.medical.api.repositories.DoctorRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

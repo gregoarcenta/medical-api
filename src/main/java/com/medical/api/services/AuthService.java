@@ -1,6 +1,6 @@
 package com.medical.api.services;
 
-import com.medical.api.repository.UserRepository;
+import com.medical.api.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

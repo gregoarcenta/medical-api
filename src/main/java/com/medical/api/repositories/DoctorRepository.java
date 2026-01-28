@@ -1,4 +1,4 @@
-package com.medical.api.repository;
+package com.medical.api.repositories;
 
 import com.medical.api.models.Doctor;
 import org.springframework.data.domain.Page;

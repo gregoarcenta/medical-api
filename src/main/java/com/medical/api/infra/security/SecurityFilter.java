@@ -2,7 +2,7 @@ package com.medical.api.infra.security;
 
 import com.medical.api.infra.security.exceptions.UserDisabledException;
 import com.medical.api.infra.security.exceptions.UserNotFoundException;
-import com.medical.api.repository.UserRepository;
+import com.medical.api.repositories.UserRepository;
 import com.medical.api.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
