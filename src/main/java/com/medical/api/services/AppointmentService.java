@@ -9,6 +9,7 @@ import com.medical.api.repositories.AppointmentRepository;
 import com.medical.api.repositories.DoctorRepository;
 import com.medical.api.repositories.PatientRepository;
 import com.medical.api.utils.Specialty;
+import com.medical.api.validations.IValidator;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -25,16 +27,19 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
+    private final List<IValidator> validators;
 
 
     public AppointmentService(
             AppointmentRepository appointmentRepository,
             PatientRepository patientRepository,
-            DoctorRepository doctorRepository
+            DoctorRepository doctorRepository,
+            List<IValidator> validators
     ) {
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
+        this.validators = validators;
     }
 
     public AppointmentResponse createAppointment(AppointmentRequest request) {
@@ -42,6 +47,9 @@ public class AppointmentService {
 
         Patient patient = patientRepository.findByIdAndActiveTrue(request.patientId())
                 .orElseThrow(() -> new EntityNotFoundException("Patient not found"));
+
+        // Validaciones
+        validators.forEach(validator -> validator.validate(request));
 
         Appointment appointment = new Appointment(null, doctor, patient, request.date());
         var appointmentSaved = this.appointmentRepository.save(appointment);
@@ -62,8 +70,6 @@ public class AppointmentService {
         LocalDateTime start = date.minusMinutes(30).truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime end = date.plusMinutes(30).truncatedTo(ChronoUnit.MINUTES);
 
-        System.out.println(start + " - " + end);
-
         long availableCount = doctorRepository.countAvailableDoctors(specialty, start, end);
         if (availableCount == 0) {
             throw new EntityNotFoundException("No available doctors for the requested specialty and date");
@@ -73,7 +79,8 @@ public class AppointmentService {
         return doctorRepository.findAvailableDoctors(specialty, start, end, PageRequest.of(randomIndex, 1))
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("No available doctors for the requested specialty and date"));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "No available doctors for the requested specialty and date"));
     }
 
     private AppointmentResponse toAppointmentResponse(Appointment appointment) {

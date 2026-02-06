@@ -75,6 +75,19 @@ import java.util.List;
         );
     }
 
+    // 400 - Argumentos inválidos
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(
+            IllegalArgumentException ex,
+            HttpServletRequest request
+    ) {
+        return buildResponse(HttpStatus.BAD_REQUEST,
+                             "Illegal argument",
+                             ex.getMessage(),
+                             request
+        );
+    }
+
     // 409 - Data Conflict
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiErrorResponse> handleConflict(
