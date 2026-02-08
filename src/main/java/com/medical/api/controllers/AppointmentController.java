@@ -3,6 +3,7 @@ package com.medical.api.controllers;
 import com.medical.api.dto.AppointmentRequest;
 import com.medical.api.dto.AppointmentResponse;
 import com.medical.api.services.AppointmentService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/appointments")
+@SecurityRequirement(name = "bearer-key")
 class AppointmentController {
 
     private final AppointmentService appointmentService;
